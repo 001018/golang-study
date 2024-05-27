@@ -1,29 +1,54 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
-	"strings"
+	"os"
 	"time"
 )
 
+func toggleCase(s string) string {
+	result := make([]rune, len(s))
+	for i, r := range s {
+		if r >= 'a' && r <= 'z' {
+			// Convert lowercase to uppercase
+			result[i] = r - 'a' + 'A'
+		} else if r >= 'A' && r <= 'Z' {
+			// Convert uppercase to lowercase
+			result[i] = r - 'A' + 'a'
+		} else {
+			// Non-alphabetic characters are not changed
+			result[i] = r
+		}
+	}
+	return string(result)
+}
 func main() {
-	var name string
-	var engname string
+	name := bufio.NewReader(os.Stdin)
 	fmt.Println("请输入你的中文名字")
-	fmt.Scanln(&name)
-	if name == "" {
+	input, err := name.ReadString('\n') // 读取直到换行符
+	if input == "" {
 		fmt.Println("您未输入中文名字")
 	}
-	if name != "" {
-		fmt.Println("你好"+name+"!", "\n"+"(请输入你的英文名字(我们会默认转换为大写字母)")
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "读取错误:", err)
+		return
 	}
-	fmt.Scanln(&engname)
-	if engname == "" {
+	if input != "" {
+		fmt.Println("你好"+input, "(请输入你的英文名字(我们会将英文字符互相转换)")
+	}
+	engname := bufio.NewReader(os.Stdin)
+	input2, err := engname.ReadString('\n') // 读取直到换行符
+	if input2 == "" {
 		fmt.Println("您未输入英文名字")
 	}
-	if engname != "" {
-		ENG := strings.ToUpper(engname)
-		fmt.Println("你好"+name+"!", "\n"+(ENG), "\n"+"感谢您的配合")
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "读取错误:", err)
+		return
+	}
+	if input2 != "" {
+		ENG := toggleCase(input2)
+		fmt.Println("你好"+input, (ENG), "感谢您的配合")
 	}
 	fmt.Println("程序将在5秒后关闭")
 	time.Sleep(5 * time.Second)
